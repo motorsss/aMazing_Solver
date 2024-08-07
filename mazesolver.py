@@ -42,7 +42,7 @@ class Window:
         line.draw(self.canvas, fill_color)
 
 class Cell:
-    def __init__(self, win):
+    def __init__(self, win=None):
         self.has_left_wall = True
         self.has_right_wall = True
         self.has_top_wall = True
@@ -90,7 +90,7 @@ class Maze:
             num_cols,
             cell_size_x,
             cell_size_y,
-            win,
+            win=None,
         ):
         self._mazex = mazex
         self._mazey = mazey
@@ -115,6 +115,8 @@ class Maze:
                 self._draw_cell(i, j)
 
     def _draw_cell(self, i, j):
+        if self._win is None:
+            return
         x1 = self._mazex + i * self._cell_size_x
         y1 = self._mazey + j * self._cell_size_y
         x2 = x1 + self._cell_size_x
@@ -126,20 +128,3 @@ class Maze:
     def _animate(self):
         self._win.redraw()
         time.sleep(0.02)
-
-
-
-
-if __name__ == "__main__":
-    num_rows = 12
-    num_cols = 16
-    margin = 50
-    screen_x = 800
-    screen_y = 600
-    cell_size_x = (screen_x - 2 * margin) / num_cols
-    cell_size_y = (screen_y - 2 * margin) / num_rows
-    win = Window(screen_x, screen_y)
-
-    maze = Maze(margin, margin, num_rows, num_cols, cell_size_x, cell_size_y, win)
-
-    win.wait_for_close()
