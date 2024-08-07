@@ -13,14 +13,14 @@ class Line:
 
     def draw(self, canvas, fill_color):
         canvas.create_line(
-            self.p1.x, self.p1.y, self.p2.x, self.p2.y, fill=fill_color, width=4
+            self.p1.x, self.p1.y, self.p2.x, self.p2.y, fill=fill_color, width=7
         )
 
 class Window:
     def __init__(self, width, height):
         self.__root = Tk()
         self.__root.title("aMazing Solver")
-        self.canvas = Canvas(self.__root, width=width, height=height)
+        self.canvas = Canvas(self.__root, bg="PaleTurquoise1", width=width, height=height)
         self.canvas.pack(fill=BOTH, expand=True)
         self.__running = False
         self.__root.protocol("WM_DELETE_WINDOW", self.close)
@@ -60,16 +60,31 @@ class Cell:
         self._y2 = y2
         if self.has_left_wall:
             line = Line(Point(x1, y1), Point(x1, y2))
-            self._win.draw_line(line)
+            self._win.draw_line(line, 'orchid3')
+        else:
+            line = Line(Point(x1, y1), Point(x1, y2))
+            self._win.draw_line(line, "PaleTurquoise1")
+
         if self.has_top_wall:
             line = Line(Point(x1, y1), Point(x2, y1))
-            self._win.draw_line(line)
+            self._win.draw_line(line, 'light sea green')
+        else:
+            line = Line(Point(x1, y1), Point(x2, y1))
+            self._win.draw_line(line, "PaleTurquoise1")
+
         if self.has_right_wall:
             line = Line(Point(x2, y1), Point(x2, y2))
-            self._win.draw_line(line)
+            self._win.draw_line(line, 'SlateBlue2')
+        else:
+            line = Line(Point(x2, y1), Point(x2, y2))
+            self._win.draw_line(line, "PaleTurquoise1")
+
         if self.has_bottom_wall:
             line = Line(Point(x1, y2), Point(x2, y2))
-            self._win.draw_line(line)
+            self._win.draw_line(line, 'DarkGoldenrod1')
+        else:
+            line = Line(Point(x1, y2), Point(x2, y2))
+            self._win.draw_line(line, "PaleTurquoise1")
 
     def draw_move(self, to_cell, undo=False):
 
@@ -78,7 +93,7 @@ class Cell:
         self._win.canvas.create_line(
                 (self._x1 + self._x2)//2, (self._y1 + self._y2)//2,
                 (to_cell._x1 + to_cell._x2)//2,(to_cell._y1 + to_cell._y2)//2,
-                fill=line_color, width = 4
+                fill=line_color, width = 14
         )
 
 class Maze:
@@ -117,10 +132,10 @@ class Maze:
     def _draw_cell(self, i, j):
         if self._win is None:
             return
-        x1 = self._mazex + i * self._cell_size_x
-        y1 = self._mazey + j * self._cell_size_y
-        x2 = x1 + self._cell_size_x
-        y2 = y1 + self._cell_size_y
+        x1 = 7+self._mazex + i * self._cell_size_x
+        y1 = 7+self._mazey + j * self._cell_size_y
+        x2 = -7+x1 + self._cell_size_x
+        y2 = -7+y1 + self._cell_size_y
         self._cells[i][j].draw(x1, y1, x2, y2)
 
         self._animate()
@@ -128,3 +143,9 @@ class Maze:
     def _animate(self):
         self._win.redraw()
         time.sleep(0.02)
+
+    def _break_entrance_and_exit(self):
+        self._cells[0][0].has_top_wall = False
+        self._draw_cell(0,0)
+        self._cells[self._num_cols-1][self._num_rows-1].has_bottom_wall = False
+        self._draw_cell(self._num_cols-1, self._num_rows-1)
