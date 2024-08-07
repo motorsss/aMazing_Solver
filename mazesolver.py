@@ -1,4 +1,5 @@
 from tkinter import Tk, BOTH, Canvas
+from colors import *
 import time
 
 class Point:
@@ -13,7 +14,7 @@ class Line:
 
     def draw(self, canvas, fill_color):
         canvas.create_line(
-            self.p1.x, self.p1.y, self.p2.x, self.p2.y, fill=fill_color, width=7
+            self.p1.x, self.p1.y, self.p2.x, self.p2.y, fill=fill_color, width=10
         )
 
 class Window:
@@ -38,7 +39,7 @@ class Window:
         self.__running = False
         self.__root.destroy()
 
-    def draw_line(self, line, fill_color="SpringGreen4"):
+    def draw_line(self, line, fill_color=colorme()):
         line.draw(self.canvas, fill_color)
 
 class Cell:
@@ -60,40 +61,40 @@ class Cell:
         self._y2 = y2
         if self.has_left_wall:
             line = Line(Point(x1, y1), Point(x1, y2))
-            self._win.draw_line(line, 'orchid3')
+            self._win.draw_line(line, colorme())
         else:
             line = Line(Point(x1, y1), Point(x1, y2))
             self._win.draw_line(line, "PaleTurquoise1")
 
         if self.has_top_wall:
             line = Line(Point(x1, y1), Point(x2, y1))
-            self._win.draw_line(line, 'light sea green')
+            self._win.draw_line(line, colorme())
         else:
             line = Line(Point(x1, y1), Point(x2, y1))
             self._win.draw_line(line, "PaleTurquoise1")
 
         if self.has_right_wall:
             line = Line(Point(x2, y1), Point(x2, y2))
-            self._win.draw_line(line, 'SlateBlue2')
+            self._win.draw_line(line, colorme())
         else:
             line = Line(Point(x2, y1), Point(x2, y2))
             self._win.draw_line(line, "PaleTurquoise1")
 
         if self.has_bottom_wall:
             line = Line(Point(x1, y2), Point(x2, y2))
-            self._win.draw_line(line, 'DarkGoldenrod1')
+            self._win.draw_line(line, colorme())
         else:
             line = Line(Point(x1, y2), Point(x2, y2))
             self._win.draw_line(line, "PaleTurquoise1")
 
     def draw_move(self, to_cell, undo=False):
 
-        line_color = "red" if not undo else "gray"
+        line_color = colorme() if not undo else "gray"
 
         self._win.canvas.create_line(
                 (self._x1 + self._x2)//2, (self._y1 + self._y2)//2,
                 (to_cell._x1 + to_cell._x2)//2,(to_cell._y1 + to_cell._y2)//2,
-                fill=line_color, width = 14
+                fill=line_color, width = 24
         )
 
 class Maze:
