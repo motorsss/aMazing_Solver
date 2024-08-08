@@ -106,6 +106,11 @@ class Cell:
                 self._x1+offset , self._y1+offset, self._x2-offset, self._y2-offset,
                 fill="goldenrod1", outline="black",
             ),
+        else:
+            self._win.canvas.create_rectangle(
+                self._x1+offset , self._y1+offset, self._x2-offset, self._y2-offset,
+                fill="PaleTurquoise1", outline="PaleTurquoise1",
+            ),
         self._win.redraw()
 
 
@@ -214,6 +219,12 @@ class Maze:
                 self._draw_cell(i, j-1)
 
             self._wallbreaker(visiting[0],visiting[1])
+
+    def _reset_cells_visited(self):
+        for cols in self._cells:
+            for cell in cols:
+                cell.visited = False
+
 
 
 

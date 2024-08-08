@@ -14,9 +14,17 @@ def main():
     maze = Maze(margin, margin, num_rows, num_cols, cell_size_x, cell_size_y, win, seed)
     maze._break_entrance_and_exit()
     maze._wallbreaker()
+
     for rows in maze._cells:
         for cols in rows:
             cols.mark_visited()
+
+    maze._reset_cells_visited()
+
+    for rows in maze._cells:
+        for cols in rows:
+            cols.mark_visited()
+
     win.wait_for_close()
 
 main()
