@@ -1,11 +1,10 @@
 from classes import *
 import time
 import sys
-import os
 
 def main():
-    num_rows = random.randint(10, 35)
-    num_cols = random.randint(10, 35)
+    num_rows = random.randint(20, 60)
+    num_cols = random.randint(20, 60)
     margin = 10
     screen_x = 2000
     screen_y = 2000

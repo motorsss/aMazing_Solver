@@ -171,7 +171,7 @@ class Maze:
 
     def _animate(self):
         self._win.redraw()
-        time.sleep(0.003)
+        time.sleep(0.001)
 
     def _break_entrance_and_exit(self):
         self._cells[0][0].has_top_wall = False
@@ -234,8 +234,7 @@ class Maze:
                 cell.visited = False
 
     def solve(self):
-        while True:
-            return self._solve_r(0,0)
+	    return self._solve_r(0,0)
 
 
     def _solve_r(self, i, j):
@@ -282,8 +281,8 @@ class Maze:
 
     def _celebration(self):
         # celebrate....more color, shapez if updated in future.
-        print('Founded Exit')
-        time.sleep(5)
+        print('Found the Exit')
+        time.sleep(2)
         exit()
 
 
