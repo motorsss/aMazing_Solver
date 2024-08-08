@@ -1,5 +1,6 @@
+import random
 import unittest
-from mazesolver import Maze
+from classes import Maze
 
 class Tests(unittest.TestCase):
     def test_maze_create_cells(self):

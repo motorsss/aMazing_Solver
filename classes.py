@@ -3,6 +3,7 @@ from colors import *
 import random
 import time
 
+
 class Point:
     def __init__(self, x, y):
         self.x = x
@@ -39,9 +40,13 @@ class Window:
     def close(self):
         self.__running = False
         self.__root.destroy()
+        self.__root = None
 
     def draw_line(self, line, fill_color=colorme()):
         line.draw(self.canvas, fill_color)
+
+    def closewin(self):
+        return self.close()
 
 class Cell:
     def __init__(self, win=None):
@@ -91,7 +96,7 @@ class Cell:
 
     def draw_move(self, to_cell, undo=False):
 
-        line_color = colorme() if not undo else "gray"
+        line_color = colorme() if not undo else "cyan4"
 
         self._win.canvas.create_line(
                 (self._x1 + self._x2)//2, (self._y1 + self._y2)//2,
@@ -137,6 +142,9 @@ class Maze:
         if seed is not None: random.seed(seed)
 
         self._create_cells()
+        self._break_entrance_and_exit()
+        self._wallbreaker()
+        self._reset_cells_visited()
 
 
     def _create_cells(self):
@@ -163,7 +171,7 @@ class Maze:
 
     def _animate(self):
         self._win.redraw()
-        time.sleep(0.001)
+        time.sleep(0.003)
 
     def _break_entrance_and_exit(self):
         self._cells[0][0].has_top_wall = False
@@ -225,6 +233,58 @@ class Maze:
             for cell in cols:
                 cell.visited = False
 
+    def solve(self):
+        while True:
+            return self._solve_r(0,0)
+
+
+    def _solve_r(self, i, j):
+        self._animate()
+        self._cells[i][j].visited = True
+        if self._cells[self._num_cols-1][self._num_rows-1].visited == True:
+            return self._celebration()
+
+
+        if not self._cells[i][j].has_left_wall:
+            if not self._cells[i-1][j].visited:
+                self._cells[i][j].draw_move(self._cells[i-1][j])
+                if self._solve_r(i-1,j):
+                    return True
+                else:
+                    self._cells[i][j].draw_move(self._cells[i-1][j], True)
+
+        if not self._cells[i][j].has_bottom_wall:
+            if not self._cells[i][j+1].visited:
+                self._cells[i][j].draw_move(self._cells[i][j+1])
+                if self._solve_r(i,j+1):
+                    return True
+                else:
+                    self._cells[i][j].draw_move(self._cells[i][j+1], True)
+
+        if not self._cells[i][j].has_top_wall:
+            if not self._cells[i][j-1].visited:
+                self._cells[i][j].draw_move(self._cells[i][j-1])
+                if self._solve_r(i,j-1):
+                    return True
+                else:
+                    self._cells[i][j].draw_move(self._cells[i][j-1], True)
+
+        if not self._cells[i][j].has_right_wall:
+            if not self._cells[i+1][j].visited:
+                self._cells[i][j].draw_move(self._cells[i+1][j])
+                if self._solve_r(i+1,j):
+                    return True
+                else:
+                    self._cells[i][j].draw_move(self._cells[i+1][j], True)
+
+        return False
+
+
+    def _celebration(self):
+        # celebrate....more color, shapez if updated in future.
+        print('Founded Exit')
+        time.sleep(5)
+        exit()
 
 
 
