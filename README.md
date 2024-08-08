@@ -1,0 +1,3 @@
+3rd personal project from [boot.dev](https://boot.dev).
+
+A colorful maze solver. Generates colorful grid walls, then randomly breaks them to create a maze. Then colorful snake tries to find it way out...
