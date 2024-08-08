@@ -64,6 +64,3 @@ def colorme():
             'MediumPurple3', 'MediumPurple4', 'thistle1', 'thistle2', 'thistle3', 'thistle4']
 
     return (colors[random.randint(0,376)])
-#     print(len(colors))
-
-# colorme()

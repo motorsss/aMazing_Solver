@@ -1,5 +1,6 @@
 from tkinter import Tk, BOTH, Canvas
 from colors import *
+import random
 import time
 
 class Point:
@@ -14,7 +15,7 @@ class Line:
 
     def draw(self, canvas, fill_color):
         canvas.create_line(
-            self.p1.x, self.p1.y, self.p2.x, self.p2.y, fill=fill_color, width=10
+            self.p1.x, self.p1.y, self.p2.x, self.p2.y, fill=fill_color, width=5
         )
 
 class Window:
@@ -53,6 +54,7 @@ class Cell:
         self._x2 = None
         self._y2 = None
         self._win = win
+        self.visited = False
 
     def draw(self, x1, y1, x2, y2):
         self._x1 = x1
@@ -97,6 +99,18 @@ class Cell:
                 fill=line_color, width = 24
         )
 
+    def mark_visited(self):
+        offset = int(min(abs(self._x2 - self._x1),abs(self._y2 - self._y1))*.33)
+        if self.visited is True:
+            self._win.canvas.create_rectangle(
+                self._x1+offset , self._y1+offset, self._x2-offset, self._y2-offset,
+                fill="goldenrod1", outline="black",
+            ),
+        self._win.redraw()
+
+
+
+
 class Maze:
     def __init__(
             self,
@@ -106,7 +120,7 @@ class Maze:
             num_cols,
             cell_size_x,
             cell_size_y,
-            win=None,
+            win=None, seed=None
         ):
         self._mazex = mazex
         self._mazey = mazey
@@ -115,6 +129,7 @@ class Maze:
         self._cell_size_x = cell_size_x
         self._cell_size_y = cell_size_y
         self._win = win
+        if seed is not None: random.seed(seed)
 
         self._create_cells()
 
@@ -130,23 +145,75 @@ class Maze:
             for j in range(self._num_rows):
                 self._draw_cell(i, j)
 
-    def _draw_cell(self, i, j):
+    def _draw_cell(self, i, j, offset=7):
         if self._win is None:
             return
-        x1 = 7+self._mazex + i * self._cell_size_x
-        y1 = 7+self._mazey + j * self._cell_size_y
-        x2 = -7+x1 + self._cell_size_x
-        y2 = -7+y1 + self._cell_size_y
+        x1 = -offset+self._mazex + i * self._cell_size_x
+        y1 = -offset+self._mazey + j * self._cell_size_y
+        x2 = offset+x1 + self._cell_size_x
+        y2 = offset+y1 + self._cell_size_y
         self._cells[i][j].draw(x1, y1, x2, y2)
 
         self._animate()
 
     def _animate(self):
         self._win.redraw()
-        time.sleep(0.02)
+        time.sleep(0.001)
 
     def _break_entrance_and_exit(self):
         self._cells[0][0].has_top_wall = False
         self._draw_cell(0,0)
         self._cells[self._num_cols-1][self._num_rows-1].has_bottom_wall = False
         self._draw_cell(self._num_cols-1, self._num_rows-1)
+
+    def _wallbreaker(self, i=0, j=0):
+
+        self._cells[i][j].visited = True
+
+        while True:
+            visitable = []
+            if i > 0 and self._cells[i-1][j].visited is False:
+                visitable.append([i-1, j])
+
+            if i < self._num_cols-1 and self._cells[i+1][j].visited is False:
+                visitable.append([i+1, j])
+
+            if j > 0 and self._cells[i][j-1].visited is False:
+                visitable.append([i, j-1])
+
+            if j < self._num_rows-1 and self._cells[i][j+1].visited is False:
+                visitable.append([i, j+1])
+
+            if len(visitable) == 0:
+                return
+            visiting = random.choice(visitable)
+
+            if visiting[0] == i + 1:
+                self._cells[i][j].has_right_wall = False
+                self._draw_cell(i, j)
+                self._cells[i + 1][j].has_left_wall = False
+                self._draw_cell(i+1, j)
+
+
+            if visiting[0] == i - 1:
+                self._cells[i][j].has_left_wall = False
+                self._draw_cell(i, j)
+                self._cells[i - 1][j].has_right_wall = False
+                self._draw_cell(i-1, j)
+
+            if visiting[1] == j + 1:
+                self._cells[i][j].has_bottom_wall = False
+                self._draw_cell(i, j)
+                self._cells[i][j + 1].has_top_wall = False
+                self._draw_cell(i, j+1)
+
+            if visiting[1] == j - 1:
+                self._cells[i][j].has_top_wall = False
+                self._draw_cell(i, j)
+                self._cells[i][j - 1].has_bottom_wall = False
+                self._draw_cell(i, j-1)
+
+            self._wallbreaker(visiting[0],visiting[1])
+
+
+
